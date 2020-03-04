@@ -1,0 +1,4 @@
+ffmpeg -f v4l2 -framerate 25 -video_size 320*240 -i /dev/video2 -f mpegts -flush_packets 0 udp://192.168.43.163:5000?pkt_size=1316
+
+On Vlc media player :
+udp://@192.168.43.163:5000

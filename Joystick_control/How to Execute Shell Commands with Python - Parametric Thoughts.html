@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)https://janakiev.com/blog/python-shell-commands/ -->
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="stylesheet" type="text/css" href="./How to Execute Shell Commands with Python - Parametric Thoughts_files/cookieconsent.min.css">
+<script async="" src="./How to Execute Shell Commands with Python - Parametric Thoughts_files/analytics.js"></script><script src="./How to Execute Shell Commands with Python - Parametric Thoughts_files/cookieconsent.min.js"></script>
+<script>
+window.addEventListener("load", function(){
+window.cookieconsent.initialise({
+  "palette": {
+    "popup": {
+      "background": "#edeff5",
+      "text": "#838391"
+    },
+    "button": {
+      "background": "#939393",
+      "text": "#ffffff"
+    }
+  },
+  "theme": "edgeless",
+  "content": {
+    "href": "/privacy-policy/"
+  }
+})});
+</script>
+
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <script src="./How to Execute Shell Commands with Python - Parametric Thoughts_files/MathJax.js" id=""></script>
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<meta name="generator" content="Jekyll v3.8.5">
+<meta property="og:title" content="How to Execute Shell Commands with Python">
+<meta name="author" content="Nikolai Janakiev">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Python is a wonderful language for scripting and automating workflows and it is packed with useful tools out of the box with the Python Standard Library. A common thing to do, especially for a sysadmin, is to execute shell commands. But what usually will end up in a bash or batch file, can be also done in Python. You’ll learn here how to do just that with the os and subprocess modules.">
+<meta property="og:description" content="Python is a wonderful language for scripting and automating workflows and it is packed with useful tools out of the box with the Python Standard Library. A common thing to do, especially for a sysadmin, is to execute shell commands. But what usually will end up in a bash or batch file, can be also done in Python. You’ll learn here how to do just that with the os and subprocess modules.">
+<link rel="canonical" href="http://janakiev.com/blog/python-shell-commands/">
+<meta property="og:url" content="http://janakiev.com/blog/python-shell-commands/">
+<meta property="og:site_name" content="Parametric Thoughts">
+<meta property="og:image" content="http://janakiev.com/assets/DEC_VT100_terminal.jpg">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-04-22T00:00:00+00:00">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="http://janakiev.com/assets/DEC_VT100_terminal.jpg">
+<meta property="twitter:title" content="How to Execute Shell Commands with Python">
+<meta name="twitter:site" content="@njanakiev">
+<meta name="twitter:creator" content="@njanakiev">
+<script type="application/ld+json">
+{"datePublished":"2019-04-22T00:00:00+00:00","dateModified":"2019-04-22T00:00:00+00:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://janakiev.com/blog/python-shell-commands/"},"url":"http://janakiev.com/blog/python-shell-commands/","author":{"@type":"Person","name":"Nikolai Janakiev"},"image":"http://janakiev.com/assets/DEC_VT100_terminal.jpg","description":"Python is a wonderful language for scripting and automating workflows and it is packed with useful tools out of the box with the Python Standard Library. A common thing to do, especially for a sysadmin, is to execute shell commands. But what usually will end up in a bash or batch file, can be also done in Python. You’ll learn here how to do just that with the os and subprocess modules.","headline":"How to Execute Shell Commands with Python","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <title>
+    
+      How to Execute Shell Commands with Python - Parametric Thoughts
+    
+  </title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="./How to Execute Shell Commands with Python - Parametric Thoughts_files/poole.css">
+  <link rel="stylesheet" href="./How to Execute Shell Commands with Python - Parametric Thoughts_files/syntax.css">
+  <link rel="stylesheet" href="./How to Execute Shell Commands with Python - Parametric Thoughts_files/lanyon.css">
+  <link rel="stylesheet" href="./How to Execute Shell Commands with Python - Parametric Thoughts_files/style.css">
+  <link rel="stylesheet" href="./How to Execute Shell Commands with Python - Parametric Thoughts_files/css">
+  <link rel="icon" href="https://janakiev.com/assets/favicon.ico">
+  <link type="application/atom+xml" rel="alternate" href="http://janakiev.com/feed.xml" title="Parametric Thoughts">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-91241801-1', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+
+  </script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style>
+  
+<script src="./How to Execute Shell Commands with Python - Parametric Thoughts_files/embed.js" data-timestamp="1582357036090"></script><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><link rel="prefetch" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.15d8f2a22cfa6b9f96345c682b01a08f.css"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.b9167d06dc7bd01b59d6d6332d6aafa1.js"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.3c28b73070ee14be97ecb734e8aca3b4.js"><link rel="prefetch" as="script" href="https://disqus.com/next/config.js"><style></style><script src="./How to Execute Shell Commands with Python - Parametric Thoughts_files/alfalfalfa.0823c767a3bc925f628afd9bed26c958.js" async="" charset="UTF-8"></script></head>
+
+
+  <body class="theme-base-10" data-gr-c-s-loaded="true"><div role="dialog" aria-live="polite" aria-label="cookieconsent" aria-describedby="cookieconsent:desc" class="cc-window cc-banner cc-type-info cc-theme-edgeless cc-bottom cc-color-override-1178595021 " style=""><!--googleoff: all--><span id="cookieconsent:desc" class="cc-message">This website uses cookies to ensure you get the best experience on our website. <a aria-label="learn more about cookies" role="button" tabindex="0" class="cc-link" href="https://janakiev.com/privacy-policy/" target="_blank">Learn more</a></span><div class="cc-compliance"><a aria-label="dismiss cookie message" role="button" tabindex="0" class="cc-btn cc-dismiss">Got it!</a></div><!--googleon: all--></div>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-item">
+    <p>Nikolai Janakiev</p>
+    <p>Freelance Data Scientist // MSc Applied Image and Signal Processing // Data Science / Data Visualization / GIS / Geometric Modelling</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="https://janakiev.com/">Home</a>
+
+    
+
+    <a class="sidebar-nav-item" href="https://janakiev.com/about">About</a>
+    <a class="sidebar-nav-item" href="https://janakiev.com/blog">Blog</a>
+    <a class="sidebar-nav-item" href="https://janakiev.com/notebooks/">Notebooks</a>
+    <span class="sidebar-nav-item"></span>
+    <a class="sidebar-nav-item" href="https://github.com/njanakiev">Github</a>
+    <a class="sidebar-nav-item" href="https://twitter.com/njanakiev">Twitter</a>
+    <a class="sidebar-nav-item" href="https://www.linkedin.com/in/nikolai-janakiev/">LinkedIn</a>
+    <span class="sidebar-nav-item"></span>
+    <a class="sidebar-nav-item" href="https://janakiev.com/imprint">Imprint</a>
+    <a class="sidebar-nav-item" href="https://janakiev.com/privacy-policy">Privacy Policy</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <p>
+      © 2019. All rights reserved.
+    </p>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="https://janakiev.com/" title="Home">Parametric Thoughts</a>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <div class="post">
+  
+    <img src="./How to Execute Shell Commands with Python - Parametric Thoughts_files/DEC_VT100_terminal.jpg">
+  
+  <h1 class="post-title">How to Execute Shell Commands with Python</h1>
+  <span class="post-date">22 Apr 2019</span>
+  <p>Python is a wonderful language for scripting and automating workflows and it is packed with useful tools out of the box with the <a href="https://docs.python.org/3/library/">Python Standard Library</a>. A common thing to do, especially for a sysadmin, is to execute shell commands. But what usually will end up in a <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">bash</a> or <a href="https://en.wikipedia.org/wiki/Batch_file">batch</a> file, can be also done in Python. You’ll learn here how to do just that with the <a href="https://docs.python.org/3/library/os.html">os</a> and <a href="https://docs.python.org/3/library/subprocess.html">subprocess</a> modules.</p>
+
+<h1 id="using-the-os-module">Using the <code class="language-plaintext highlighter-rouge">os</code> Module</h1>
+
+<p>The first and the most straight forward approach to run a shell command is by using <a href="https://docs.python.org/3/library/os.html#os.system">os.system()</a>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'ls -l'</span><span class="p">)</span>
+</code></pre></div></div>
+<p>If you save this as a script and run it, you will see the output in the command line. The problem with this approach is in its inflexibility since you can’t even get the resulting output as a variable. You can read more about this function in the <a href="https://docs.python.org/3/library/os.html#os.system">documentation</a>.</p>
+
+<p>Note, that if you run this function in Jupyter notebook, you won’t have an output inline. Instead you the inline output will be the return code of the executed programm (<code class="language-plaintext highlighter-rouge">0</code> for successful and <code class="language-plaintext highlighter-rouge">-1</code> for unsuccessful). You will find the output in the command line where you have started Jupyter notebook.</p>
+
+<p>Next, the <a href="https://docs.python.org/3/library/os.html#os.popen">os.popen()</a> command opens a pipe from or to the command line. This means that we can access the stream within Python. This is useful since you can now get the output as a variable:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">stream</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">'echo Returned output'</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">output</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'Returned output\n'
+</code></pre></div></div>
+
+<p>When you use the <code class="language-plaintext highlighter-rouge">.read()</code> function, you will get the whole output as one string. You can also use the <code class="language-plaintext highlighter-rouge">.readlines()</code> function, which splits each line (including a trailing <code class="language-plaintext highlighter-rouge">\n</code>). Note, that you can run them only once. It is also possible to write to the stream by using the <code class="language-plaintext highlighter-rouge">mode='w'</code> argument. To delve deeper into this function, have a look at the <a href="https://docs.python.org/3/library/os.html#os.popen">documentation</a>.</p>
+
+<p>In this example and in the following examples, you will see that you always have trailing line breaks in the output. To remove them (including blank spaces and tabs in the beginning and end) you can use the <code class="language-plaintext highlighter-rouge">.strip()</code> function like with <code class="language-plaintext highlighter-rouge">output.strip()</code>. To remove those characters only in the beginning use <code class="language-plaintext highlighter-rouge">.lstrip()</code> and for the end <code class="language-plaintext highlighter-rouge">.rstrip()</code>.</p>
+
+<h1 id="using-the-subprocess-module">Using the <code class="language-plaintext highlighter-rouge">subprocess</code> Module</h1>
+
+<p>The final approach is also the most versatile approach and the recommended module to run external commands in Python:</p>
+
+<blockquote>
+  <p>The <a href="https://docs.python.org/3/library/subprocess.html#module-subprocess">subprocess</a> module provides more powerful facilities for spawning new processes and retrieving their results; using that module is preferable to using this function. See the <a href="https://docs.python.org/3/library/subprocess.html#subprocess-replacements">Replacing Older Functions with the subprocess Module</a> section in the <a href="https://docs.python.org/3/library/subprocess.html#module-subprocess">subprocess</a> documentation for some helpful recipes. (<a href="https://docs.python.org/3/library/os.html#os.system">Source</a>)</p>
+</blockquote>
+
+<p>The main function you want to keep in mind if you use Python &gt;= 3.5 is <a href="https://docs.python.org/3/library/subprocess.html#subprocess.run">subprocess.run()</a>, but before we get there let’s go through the functionality of the <code class="language-plaintext highlighter-rouge">subprocess</code> module. The <a href="https://docs.python.org/3/library/subprocess.html#subprocess.Popen">subprocess.Popen()</a> class is responsible for the creation and management of the executed process. In contrast to the previous functions, this class executes only a single command with arguments as a list. This means that you won’t be able to <a href="https://en.wikipedia.org/wiki/Pipeline_(Unix)">pipe</a> commands:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">'echo'</span><span class="p">,</span> <span class="s">'More output'</span><span class="p">],</span>
+                     <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> 
+                     <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+<span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+<span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(b'More output\n', b'')
+</code></pre></div></div>
+
+<p>You’ll notice that we set <code class="language-plaintext highlighter-rouge">stdout</code> and <code class="language-plaintext highlighter-rouge">stderr</code> to <a href="https://docs.python.org/3/library/subprocess.html#subprocess.PIPE">subprocess.PIPE</a>. This is a special value that indicates to <code class="language-plaintext highlighter-rouge">subprocess.Popen</code> that a pipe should be opened that you can then read with the <code class="language-plaintext highlighter-rouge">.communicate()</code> function. It is also possible to use a file object as with:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'test.txt'</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">'ls'</span><span class="p">,</span> <span class="s">'-l'</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Another thing that you’ll notice is that the output is of type <a href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a>. You can solve that by typing <code class="language-plaintext highlighter-rouge">stdout.decode('utf-8')</code> or by adding <code class="language-plaintext highlighter-rouge">universal_newlines=True</code> when calling <code class="language-plaintext highlighter-rouge">subprocess.Popen</code>.</p>
+
+<p>When you run <code class="language-plaintext highlighter-rouge">.communicate()</code>, it will wait until the process is complete. However if you have a long program that you want to run and you want to continuously check the status in realtime while doing something else, you can do this like here:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">'ping'</span><span class="p">,</span> <span class="s">'-c 4'</span><span class="p">,</span> <span class="s">'python.org'</span><span class="p">],</span> 
+                           <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                           <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="c1"># Do something else
+</span>    <span class="n">return_code</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">return_code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'RETURN CODE'</span><span class="p">,</span> <span class="n">return_code</span><span class="p">)</span>
+        <span class="c1"># Process has finished, read rest of the output 
+</span>        <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">break</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PING python.org (45.55.99.72) 56(84) bytes of data.
+64 bytes from 45.55.99.72 (45.55.99.72): icmp_seq=1 ttl=51 time=117 ms
+64 bytes from 45.55.99.72 (45.55.99.72): icmp_seq=2 ttl=51 time=118 ms
+64 bytes from 45.55.99.72 (45.55.99.72): icmp_seq=3 ttl=51 time=117 ms
+64 bytes from 45.55.99.72 (45.55.99.72): icmp_seq=4 ttl=51 time=118 ms
+
+--- python.org ping statistics ---
+RETURN CODE 0
+4 packets transmitted, 4 received, 0% packet loss, time 3001ms
+rtt min/avg/max/mdev = 117.215/117.874/118.358/0.461 ms
+</code></pre></div></div>
+
+<p>You can use the <code class="language-plaintext highlighter-rouge">.poll()</code> function to check the return code of the process. It will return <code class="language-plaintext highlighter-rouge">None</code> while the process is still running. To get the output, you can use <code class="language-plaintext highlighter-rouge">process.stdout.readline()</code> to read a single line. Conversely, when you use <code class="language-plaintext highlighter-rouge">process.stdout.readlines()</code>, it reads all lines and it also waits for the process to finish if it has not finished yet. For more information on the functionionality of <code class="language-plaintext highlighter-rouge">subprocess.Popen</code>, have a look at the <a href="https://docs.python.org/3/library/subprocess.html#subprocess.Popen">documentation</a>.</p>
+
+<p>Also note, that you won’t need quotations for arguments with spaces in between like <code class="language-plaintext highlighter-rouge">'\"More output\"'</code>. If you are unsure how to tokenize the arguments from the command, you can use the <a href="https://docs.python.org/3/library/shlex.html#shlex.split">shlex.split()</a> function:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">shlex</span>
+<span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">"/bin/prog -i data.txt -o </span><span class="se">\"</span><span class="s">more data.txt</span><span class="se">\"</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>['/bin/prog', '-i', 'data.txt', '-o', 'more data.txt']
+</code></pre></div></div>
+
+<p>You have also the <a href="https://docs.python.org/3/library/subprocess.html#subprocess.call">subprocess.call()</a> function to your disposal which works like the <code class="language-plaintext highlighter-rouge">Popen</code> class, but it waits until the command completes and gives you the return code as in <code class="language-plaintext highlighter-rouge">return_code = subprocess.call(['echo', 'Even more output'])</code>. The recommended way however is to use <a href="https://docs.python.org/3/library/subprocess.html#subprocess.run">subprocess.run()</a> which works since Python 3.5. It has been added as a simplification of <code class="language-plaintext highlighter-rouge">subprocess.Popen</code>. The function will return a <a href="https://docs.python.org/3/library/subprocess.html#subprocess.CompletedProcess">subprocess.CompletedProcess</a> object:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s">'echo'</span><span class="p">,</span> <span class="s">'Even more output'</span><span class="p">],</span> 
+                         <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> 
+                         <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">process</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CompletedProcess(args=['echo', 'Even more output'], returncode=0, stdout='Even more output\n')
+</code></pre></div></div>
+
+<p>You can now find the resulting output in this variable:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">process</span><span class="o">.</span><span class="n">stdout</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'Even more output\n'
+</code></pre></div></div>
+
+<p>Similar to <code class="language-plaintext highlighter-rouge">subprocess.call()</code> and the previous <code class="language-plaintext highlighter-rouge">.communicate()</code> function, it will wait untill the process is completed. Finally, here is a more advanced example on how to access a server with ssh and the <code class="language-plaintext highlighter-rouge">subprocess</code> module:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="n">ssh</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">"ssh"</span><span class="p">,</span> <span class="s">"-i .ssh/id_rsa"</span><span class="p">,</span> <span class="s">"user@host"</span><span class="p">],</span>
+                        <span class="n">stdin</span> <span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">bufsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+ 
+<span class="c1"># Send ssh commands to stdin
+</span><span class="n">ssh</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">"uname -a</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">"uptime</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># Fetch output
+</span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ssh</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p>Here you can see how to write input to the process. In this case you need to set the <code class="language-plaintext highlighter-rouge">bufsize=0</code> in order to have unbuffered output. After you are finished writing to the <code class="language-plaintext highlighter-rouge">stdin</code>, you need to close the connection.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>You have seen now how to run external commands in Python. The most effective way is to use the <code class="language-plaintext highlighter-rouge">subprocess</code> module with all the functionality it offers. Most notably, you should consider using <code class="language-plaintext highlighter-rouge">subprocess.run</code>. For a short and quick script you might just want to use the <code class="language-plaintext highlighter-rouge">os.system()</code> or <code class="language-plaintext highlighter-rouge">os.popen()</code> functions. If you have any questions, feel free to leave them in the comments below. There are also other useful libraries that support shell commands in Python, like <a href="https://plumbum.readthedocs.io/en/latest/">plumbum</a>, <a href="https://amoffat.github.io/sh/">sh</a>, <a href="https://psutil.readthedocs.io/en/latest/">psutils</a> and <a href="https://pexpect.readthedocs.io/en/stable/">pexpect</a>.</p>
+
+<h2 id="further-reading">Further Reading</h2>
+
+<ul>
+  <li><a href="https://realpython.com/python-cli-testing/">4 Techniques for Testing Python Command-Line (CLI) Apps</a></li>
+  <li><a href="https://docs.python.org/3/library/subprocess.html#frequently-used-arguments">Frequently Used Arguments - subprocess</a></li>
+</ul>
+
+</div>
+
+
+  
+    <span class="footnote">Image from <a href="https://commons.wikimedia.org/wiki/File:DEC_VT100_terminal.jpg">Wikimedia Commons</a></span>
+    
+
+
+
+<div id="disqus_thread"><iframe id="dsq-app982" name="dsq-app982" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./How to Execute Shell Commands with Python - Parametric Thoughts_files/saved_resource.html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 580px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://janakiev.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+<div class="related">
+<h2>Related Posts</h2>
+
+
+
+
+  
+  <ul class="related-posts">
+  
+
+    
+    
+
+    
+
+    
+      <li>
+        <h3>
+          <a href="https://janakiev.com/blog/apache-airflow-systemd/">
+            How to Manage Apache Airflow with Systemd on Debian or Ubuntu<br>
+            <small>20 Dec 2019</small>
+          </a>
+        </h3>
+      </li>
+      
+      
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+      <li>
+        <h3>
+          <a href="https://janakiev.com/blog/python-testing-server/">
+            Local Testing Server with Python<br>
+            <small>30 Oct 2018</small>
+          </a>
+        </h3>
+      </li>
+      
+      
+    
+
+  
+
+    
+    
+
+    
+
+    
+      <li>
+        <h3>
+          <a href="https://janakiev.com/blog/python-background/">
+            Running a Python Script in the Background<br>
+            <small>19 Oct 2018</small>
+          </a>
+        </h3>
+      </li>
+      
+      
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+
+  
+
+    
+    
+
+    
+
+    
+      <li>
+        <h3>
+          <a href="https://janakiev.com/blog/blender-interactive-console/">
+            Using the Blender Interactive Console from the Command-Line<br>
+            <small>24 Mar 2018</small>
+          </a>
+        </h3>
+      </li>
+      
+      
+        
+  </ul>
+</div>
+
+
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+  
+
+<iframe style="display: none;" src="./How to Execute Shell Commands with Python - Parametric Thoughts_files/saved_resource(1).html"></iframe></body></html>

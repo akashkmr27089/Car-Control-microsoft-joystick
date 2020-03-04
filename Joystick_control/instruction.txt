@@ -1,0 +1,5 @@
+The following documentation contains the codes to use subprocess to execute and read shell commands using python ::
+https://janakiev.com/blog/python-shell-commands/
+
+
+

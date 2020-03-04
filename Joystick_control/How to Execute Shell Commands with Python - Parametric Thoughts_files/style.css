@@ -1,0 +1,66 @@
+.post-listing-date,
+.post-listing-tags {
+  font-size: 0.8rem;
+  margin-top: -0.6rem;
+  margin-bottom: 0.5rem;
+  color: #9a9a9a;
+  display: block;
+}
+
+.post-listing-title,
+.post-listing-title a {
+  font-size: 1.3rem;
+  color: #303030;
+}
+
+.section-introduction {
+  padding-bottom: 1em;
+}
+
+.footnote {
+  font-family: "PT Sans", Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+  color: #9a9a9a;
+}
+
+.masthead {
+  margin-bottom: 2rem;
+}
+
+.posts {
+  margin-bottom: 5rem; 
+}
+
+.footer {
+  font-family: "PT Sans", Helvetica, Arial, sans-serif;
+  font-size: 1.05rem;
+  margin-top: 2rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+@media (max-width: 48em) {
+  .footer {
+  	text-align: center;
+  }
+}
+
+.footer a {
+  color: #707070;
+  padding-right: 1.0rem; 
+  margin-left:  auto;
+}
+
+table {
+  display: block;
+  overflow: auto;
+  font-size: .58rem;
+  border: none;
+}
+
+pre {
+  font-size: .6rem;
+  overflow: auto;
+  white-space: pre;
+}
