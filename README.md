@@ -6,7 +6,7 @@ The communication medium for both the remote system and the RC Car is Wifi.
 
 The protocol used for connection in TCP as it is connection-oriented and thus best for handling drop packet as each packet is acknowledged.
 
-Requirement :
+## Requirement :
 Libraries Requirement:
 
 socket
@@ -16,3 +16,15 @@ os
 subprocess
 matplotlib
 time
+
+## Backend Software used 
+JSTEST
+https://jstest-gtk.gitlab.io/
+
+
+# Execution
+### Server 
+python ./tcp_joystic_comm.py
+
+# Client
+python ./tcp_client.py
